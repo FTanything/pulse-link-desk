@@ -31,6 +31,8 @@ const Index = () => {
       time: "23:00",
     },
   ]);
+  
+  const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
 
   const handleAddTask = (taskData: { name: string; date: Date; time: string }) => {
     const newTask: Task = {
@@ -60,10 +62,16 @@ const Index = () => {
 
         // Alert when it's time for the task (within the same minute)
         if (taskDate === currentDate && task.time === currentTime && minutesDiff === 0) {
+          setActiveTaskId(task.id);
           toast.info(`⏰ Task Alert: ${task.name}`, {
             description: "It's time for your task!",
             duration: 10000,
           });
+        }
+        
+        // Clear highlight if task time has passed but not yet 5 minutes
+        if (minutesDiff > 0 && minutesDiff < 5 && activeTaskId === task.id) {
+          setActiveTaskId(null);
         }
 
         // Auto-delete if 5+ minutes past
@@ -127,7 +135,7 @@ const Index = () => {
 
           {/* Right Column - Tasks */}
           <div className="space-y-6">
-            <TaskList tasks={tasks} onDeleteTask={handleDeleteTask} />
+            <TaskList tasks={tasks} onDeleteTask={handleDeleteTask} activeTaskId={activeTaskId} />
             
             {/* Add Task Form - Show on desktop in right column */}
             <div className="hidden lg:block">

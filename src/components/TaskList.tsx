@@ -12,9 +12,10 @@ interface Task {
 interface TaskListProps {
   tasks: Task[];
   onDeleteTask: (id: string) => void;
+  activeTaskId?: string | null;
 }
 
-export const TaskList = ({ tasks, onDeleteTask }: TaskListProps) => {
+export const TaskList = ({ tasks, onDeleteTask, activeTaskId }: TaskListProps) => {
   return (
     <div className="glass-card rounded-3xl p-6 space-y-4">
       <h2 className="text-xl font-semibold text-foreground mb-4">Upcoming Tasks</h2>
@@ -25,7 +26,9 @@ export const TaskList = ({ tasks, onDeleteTask }: TaskListProps) => {
           tasks.map((task) => (
             <div
               key={task.id}
-              className="glass-card rounded-2xl p-4 hover:shadow-xl transition-shadow duration-300"
+              className={`glass-card rounded-2xl p-4 hover:shadow-xl transition-all duration-300 ${
+                activeTaskId === task.id ? 'ring-2 ring-primary shadow-lg shadow-primary/30 animate-pulse' : ''
+              }`}
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
