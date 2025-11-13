@@ -1,5 +1,6 @@
 import { format } from "date-fns";
-import { Calendar, Clock } from "lucide-react";
+import { Calendar, Clock, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface Task {
   id: string;
@@ -10,9 +11,10 @@ interface Task {
 
 interface TaskListProps {
   tasks: Task[];
+  onDeleteTask: (id: string) => void;
 }
 
-export const TaskList = ({ tasks }: TaskListProps) => {
+export const TaskList = ({ tasks, onDeleteTask }: TaskListProps) => {
   return (
     <div className="glass-card rounded-3xl p-6 space-y-4">
       <h2 className="text-xl font-semibold text-foreground mb-4">Upcoming Tasks</h2>
@@ -39,8 +41,18 @@ export const TaskList = ({ tasks }: TaskListProps) => {
                     </div>
                   </div>
                 </div>
-                <div className="text-xs text-muted-foreground bg-muted/30 px-3 py-1 rounded-full whitespace-nowrap">
-                  {task.name.length}/40
+                <div className="flex items-center gap-2">
+                  <div className="text-xs text-muted-foreground bg-muted/30 px-3 py-1 rounded-full whitespace-nowrap">
+                    {task.name.length}/40
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onDeleteTask(task.id)}
+                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
                 </div>
               </div>
             </div>

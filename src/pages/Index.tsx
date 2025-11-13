@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { TimeWidget } from "@/components/TimeWidget";
 import { SensorCard } from "@/components/SensorCard";
 import { TaskList } from "@/components/TaskList";
@@ -38,6 +39,45 @@ const Index = () => {
     };
     setTasks([...tasks, newTask]);
   };
+
+  const handleDeleteTask = (id: string) => {
+    setTasks(tasks.filter(task => task.id !== id));
+    toast.success("Task deleted");
+  };
+
+  // Check for task alerts and auto-delete
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      const currentDate = now.toDateString();
+
+      tasks.forEach(task => {
+        const taskDate = task.date.toDateString();
+        const taskDateTime = new Date(`${taskDate} ${task.time}`);
+        const timeDiff = now.getTime() - taskDateTime.getTime();
+        const minutesDiff = Math.floor(timeDiff / 60000);
+
+        // Alert when it's time for the task (within the same minute)
+        if (taskDate === currentDate && task.time === currentTime && minutesDiff === 0) {
+          toast.info(`⏰ Task Alert: ${task.name}`, {
+            description: "It's time for your task!",
+            duration: 10000,
+          });
+        }
+
+        // Auto-delete if 5+ minutes past
+        if (minutesDiff >= 5) {
+          setTasks(prev => prev.filter(t => t.id !== task.id));
+          toast("Task auto-deleted (5 minutes past)", {
+            description: task.name,
+          });
+        }
+      });
+    }, 30000); // Check every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [tasks]);
 
   return (
     <div 
@@ -87,7 +127,7 @@ const Index = () => {
 
           {/* Right Column - Tasks */}
           <div className="space-y-6">
-            <TaskList tasks={tasks} />
+            <TaskList tasks={tasks} onDeleteTask={handleDeleteTask} />
             
             {/* Add Task Form - Show on desktop in right column */}
             <div className="hidden lg:block">
