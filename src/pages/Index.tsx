@@ -34,6 +34,17 @@ const Index = () => {
   
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
 
+  // Request notification permission on mount
+  useEffect(() => {
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          toast.success("Notifications enabled for task alerts");
+        }
+      });
+    }
+  }, []);
+
   const handleAddTask = (taskData: { name: string; date: Date; time: string }) => {
     const newTask: Task = {
       id: Date.now().toString(),
@@ -63,6 +74,18 @@ const Index = () => {
         // Alert when it's time for the task (within the same minute)
         if (taskDate === currentDate && task.time === currentTime && minutesDiff === 0) {
           setActiveTaskId(task.id);
+          
+          // Show browser notification
+          if ("Notification" in window && Notification.permission === "granted") {
+            new Notification("⏰ Task Alert", {
+              body: task.name,
+              icon: "/favicon.ico",
+              tag: task.id,
+              requireInteraction: true,
+            });
+          }
+          
+          // Also show in-app toast
           toast.info(`⏰ Task Alert: ${task.name}`, {
             description: "It's time for your task!",
             duration: 10000,
