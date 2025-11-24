@@ -8,6 +8,7 @@ import { Thermometer, Sun, Droplet, Cloud } from "lucide-react";
 import backgroundImage from "@/assets/background.png";
 const SHADOW_DATA_URL = import.meta.env.VITE_SHADOW_DATA_URL;
 const SHADOW_AUTHORIZATION = import.meta.env.VITE_SHADOW_AUTHORIZATION;
+const SENSOR_REFRESH_INTERVAL_MS = 10_000;
 
 interface Task {
   id: string;
@@ -105,7 +106,10 @@ const Index = () => {
     };
 
     fetchSensorReadings();
-    const intervalId = window.setInterval(fetchSensorReadings, 60000);
+    const intervalId = window.setInterval(
+      fetchSensorReadings,
+      SENSOR_REFRESH_INTERVAL_MS
+    );
 
     return () => {
       isMounted = false;
@@ -113,7 +117,6 @@ const Index = () => {
     };
   }, []);
 
-  // Request notification permission on mount
   useEffect(() => {
     if ("Notification" in window && Notification.permission === "default") {
       Notification.requestPermission().then((permission) => {
@@ -141,7 +144,6 @@ const Index = () => {
     toast.success("Task deleted");
   };
 
-  // Check for task alerts and auto-delete
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
@@ -156,7 +158,6 @@ const Index = () => {
         const timeDiff = now.getTime() - taskDateTime.getTime();
         const minutesDiff = Math.floor(timeDiff / 60000);
 
-        // Alert when it's time for the task (within the same minute)
         if (
           taskDate === currentDate &&
           task.time === currentTime &&
@@ -164,7 +165,6 @@ const Index = () => {
         ) {
           setActiveTaskId(task.id);
 
-          // Show browser notification
           if (
             "Notification" in window &&
             Notification.permission === "granted"
@@ -177,19 +177,16 @@ const Index = () => {
             });
           }
 
-          // Also show in-app toast
           toast.info(`⏰ Task Alert: ${task.name}`, {
             description: "It's time for your task!",
             duration: 10000,
           });
         }
 
-        // Clear highlight if task time has passed but not yet 5 minutes
         if (minutesDiff > 0 && minutesDiff < 5 && activeTaskId === task.id) {
           setActiveTaskId(null);
         }
 
-        // Auto-delete if 5+ minutes past
         if (minutesDiff >= 5) {
           setTasks((prev) => prev.filter((t) => t.id !== task.id));
           toast("Task auto-deleted (5 minutes past)", {
@@ -197,7 +194,7 @@ const Index = () => {
           });
         }
       });
-    }, 30000); // Check every 30 seconds
+    }, 30000);
 
     return () => clearInterval(interval);
   }, [tasks, activeTaskId]);
@@ -208,12 +205,9 @@ const Index = () => {
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Time Widget - Full Width */}
         <TimeWidget />
 
-        {/* Two Column Layout for Tablet and Desktop */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left Column - Sensors */}
           <div className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <SensorCard
@@ -242,13 +236,11 @@ const Index = () => {
               />
             </div>
 
-            {/* Add Task Form - Show on mobile in left column */}
             <div className="lg:hidden">
               <AddTaskForm onAddTask={handleAddTask} />
             </div>
           </div>
 
-          {/* Right Column - Tasks */}
           <div className="space-y-6">
             <TaskList
               tasks={tasks}
@@ -256,7 +248,6 @@ const Index = () => {
               activeTaskId={activeTaskId}
             />
 
-            {/* Add Task Form - Show on desktop in right column */}
             <div className="hidden lg:block">
               <AddTaskForm onAddTask={handleAddTask} />
             </div>

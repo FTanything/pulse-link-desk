@@ -7,7 +7,12 @@ interface SensorCardProps {
   label: string;
 }
 
-export const SensorCard = ({ icon: Icon, value, unit, label }: SensorCardProps) => {
+export const SensorCard = ({
+  icon: Icon,
+  value,
+  unit,
+  label,
+}: SensorCardProps) => {
   return (
     <div className="glass-card rounded-3xl p-6 flex flex-col items-center justify-center gap-4 hover:scale-105 transition-transform duration-300">
       <div className="w-16 h-16 rounded-full gradient-icon flex items-center justify-center">
