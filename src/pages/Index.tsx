@@ -7,7 +7,7 @@ import { AddTaskForm } from "@/components/AddTaskForm";
 import { Thermometer, Sun, Droplet, Cloud } from "lucide-react";
 import backgroundImage from "@/assets/background.png";
 const SHADOW_DATA_URL = import.meta.env.VITE_SHADOW_DATA_URL;
-const SHADOW_AUTHORIZATION = import.meta.env.VITE_SHADOW_AUTHORIZATION
+const SHADOW_AUTHORIZATION = import.meta.env.VITE_SHADOW_AUTHORIZATION;
 
 interface Task {
   id: string;
@@ -50,7 +50,7 @@ const Index = () => {
       time: "23:00",
     },
   ]);
-  
+
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -82,7 +82,9 @@ const Index = () => {
         }
 
         const payload: ShadowResponse = await response.json();
-        const readings = (payload?.data ?? {}) as NonNullable<ShadowResponse["data"]>;
+        const readings = (payload?.data ?? {}) as NonNullable<
+          ShadowResponse["data"]
+        >;
 
         if (!isMounted) {
           return;
@@ -122,7 +124,11 @@ const Index = () => {
     }
   }, []);
 
-  const handleAddTask = (taskData: { name: string; date: Date; time: string }) => {
+  const handleAddTask = (taskData: {
+    name: string;
+    date: Date;
+    time: string;
+  }) => {
     const newTask: Task = {
       id: Date.now().toString(),
       ...taskData,
@@ -131,7 +137,7 @@ const Index = () => {
   };
 
   const handleDeleteTask = (id: string) => {
-    setTasks(tasks.filter(task => task.id !== id));
+    setTasks(tasks.filter((task) => task.id !== id));
     toast.success("Task deleted");
   };
 
@@ -139,21 +145,30 @@ const Index = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
-      const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      const currentTime = `${String(now.getHours()).padStart(2, "0")}:${String(
+        now.getMinutes()
+      ).padStart(2, "0")}`;
       const currentDate = now.toDateString();
 
-      tasks.forEach(task => {
+      tasks.forEach((task) => {
         const taskDate = task.date.toDateString();
         const taskDateTime = new Date(`${taskDate} ${task.time}`);
         const timeDiff = now.getTime() - taskDateTime.getTime();
         const minutesDiff = Math.floor(timeDiff / 60000);
 
         // Alert when it's time for the task (within the same minute)
-        if (taskDate === currentDate && task.time === currentTime && minutesDiff === 0) {
+        if (
+          taskDate === currentDate &&
+          task.time === currentTime &&
+          minutesDiff === 0
+        ) {
           setActiveTaskId(task.id);
-          
+
           // Show browser notification
-          if ("Notification" in window && Notification.permission === "granted") {
+          if (
+            "Notification" in window &&
+            Notification.permission === "granted"
+          ) {
             new Notification("⏰ Task Alert", {
               body: task.name,
               icon: "/favicon.ico",
@@ -161,14 +176,14 @@ const Index = () => {
               requireInteraction: true,
             });
           }
-          
+
           // Also show in-app toast
           toast.info(`⏰ Task Alert: ${task.name}`, {
             description: "It's time for your task!",
             duration: 10000,
           });
         }
-        
+
         // Clear highlight if task time has passed but not yet 5 minutes
         if (minutesDiff > 0 && minutesDiff < 5 && activeTaskId === task.id) {
           setActiveTaskId(null);
@@ -176,7 +191,7 @@ const Index = () => {
 
         // Auto-delete if 5+ minutes past
         if (minutesDiff >= 5) {
-          setTasks(prev => prev.filter(t => t.id !== task.id));
+          setTasks((prev) => prev.filter((t) => t.id !== task.id));
           toast("Task auto-deleted (5 minutes past)", {
             description: task.name,
           });
@@ -188,7 +203,7 @@ const Index = () => {
   }, [tasks, activeTaskId]);
 
   return (
-    <div 
+    <div
       className="min-h-screen w-full bg-cover bg-center bg-fixed p-4 md:p-8"
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
@@ -226,7 +241,7 @@ const Index = () => {
                 label="PM 2.5"
               />
             </div>
-            
+
             {/* Add Task Form - Show on mobile in left column */}
             <div className="lg:hidden">
               <AddTaskForm onAddTask={handleAddTask} />
@@ -235,8 +250,12 @@ const Index = () => {
 
           {/* Right Column - Tasks */}
           <div className="space-y-6">
-            <TaskList tasks={tasks} onDeleteTask={handleDeleteTask} activeTaskId={activeTaskId} />
-            
+            <TaskList
+              tasks={tasks}
+              onDeleteTask={handleDeleteTask}
+              activeTaskId={activeTaskId}
+            />
+
             {/* Add Task Form - Show on desktop in right column */}
             <div className="hidden lg:block">
               <AddTaskForm onAddTask={handleAddTask} />
