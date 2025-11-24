@@ -1,4 +1,5 @@
-import { API_BASE_URL, API_KEY } from "@/config/apiConfig";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+const API_KEY = import.meta.env.VITE_API_KEY
 import { TaskJson, Task } from "../../interface";
 
 export async function getTaskByID(id:string):Promise<Task>{

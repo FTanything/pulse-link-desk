@@ -6,6 +6,8 @@ import { TaskList } from "@/components/TaskList";
 import { AddTaskForm } from "@/components/AddTaskForm";
 import { Thermometer, Sun, Droplet, Cloud } from "lucide-react";
 import backgroundImage from "@/assets/background.png";
+const SHADOW_DATA_URL = import.meta.env.VITE_SHADOW_DATA_URL;
+const SHADOW_AUTHORIZATION = import.meta.env.VITE_SHADOW_AUTHORIZATION
 
 interface Task {
   id: string;
@@ -14,14 +16,31 @@ interface Task {
   time: string;
 }
 
-const Index = () => {
-  // Mock sensor data - in production, this would come from API
-  const sensorData = {
-    temperature: 25,
-    lumen: 25,
-    moisture: 25,
-    pm25: 25,
+interface SensorData {
+  temperature: number;
+  lumen: number;
+  humidity: number;
+  pm25: number;
+}
+
+interface ShadowResponse {
+  data?: {
+    temperature?: unknown;
+    humidity?: unknown;
+    lumen?: unknown;
+    light?: unknown;
+    "pm2.5"?: unknown;
+    pm25?: unknown;
   };
+}
+
+const Index = () => {
+  const [sensorData, setSensorData] = useState<SensorData>({
+    temperature: 0,
+    lumen: 0,
+    humidity: 0,
+    pm25: 0,
+  });
 
   const [tasks, setTasks] = useState<Task[]>([
     {
@@ -33,6 +52,64 @@ const Index = () => {
   ]);
   
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const toNumber = (value: unknown): number => {
+      if (typeof value === "number") {
+        return value;
+      }
+
+      if (typeof value === "string") {
+        const parsed = Number(value);
+        return Number.isFinite(parsed) ? parsed : 0;
+      }
+
+      return 0;
+    };
+
+    const fetchSensorReadings = async () => {
+      try {
+        const response = await fetch(SHADOW_DATA_URL, {
+          headers: {
+            Authorization: SHADOW_AUTHORIZATION,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        const payload: ShadowResponse = await response.json();
+        const readings = (payload?.data ?? {}) as NonNullable<ShadowResponse["data"]>;
+
+        if (!isMounted) {
+          return;
+        }
+
+        setSensorData({
+          temperature: toNumber(readings.temperature),
+          lumen: toNumber(readings.lumen ?? readings.light),
+          humidity: toNumber(readings.humidity),
+          pm25: toNumber(readings["pm2.5"] ?? readings.pm25),
+        });
+      } catch (error) {
+        if (isMounted) {
+          console.error("Failed to fetch sensor data", error);
+          toast.error("Unable to refresh sensor readings");
+        }
+      }
+    };
+
+    fetchSensorReadings();
+    const intervalId = window.setInterval(fetchSensorReadings, 60000);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(intervalId);
+    };
+  }, []);
 
   // Request notification permission on mount
   useEffect(() => {
@@ -108,7 +185,7 @@ const Index = () => {
     }, 30000); // Check every 30 seconds
 
     return () => clearInterval(interval);
-  }, [tasks]);
+  }, [tasks, activeTaskId]);
 
   return (
     <div 
@@ -138,9 +215,9 @@ const Index = () => {
               />
               <SensorCard
                 icon={Droplet}
-                value={sensorData.moisture}
+                value={sensorData.humidity}
                 unit="%"
-                label="Moisture"
+                label="humidity"
               />
               <SensorCard
                 icon={Cloud}
