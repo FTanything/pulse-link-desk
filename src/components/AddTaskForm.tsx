@@ -18,17 +18,17 @@ export const AddTaskForm = ({ onAddTask }: AddTaskFormProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!taskName.trim()) {
       toast.error("Please enter a task name");
       return;
     }
-    
+
     if (!selectedDate) {
       toast.error("Please select a date");
       return;
     }
-    
+
     if (!selectedTime) {
       toast.error("Please select a time");
       return;
@@ -40,11 +40,10 @@ export const AddTaskForm = ({ onAddTask }: AddTaskFormProps) => {
       time: selectedTime,
     });
 
-    // Reset form
     setTaskName("");
     setSelectedDate(undefined);
     setSelectedTime("");
-    
+
     toast.success("Task created successfully!");
   };
 
@@ -60,7 +59,7 @@ export const AddTaskForm = ({ onAddTask }: AddTaskFormProps) => {
         <CalendarIcon className="w-6 h-6 text-accent" />
         <h2 className="text-xl font-semibold text-foreground">Add New Task</h2>
       </div>
-      
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <Input
@@ -87,7 +86,9 @@ export const AddTaskForm = ({ onAddTask }: AddTaskFormProps) => {
                 className="glass-card border-glass-border/30 justify-start text-left font-normal"
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {selectedDate ? format(selectedDate, "dd/MM/yyyy") : "Select Date"}
+                {selectedDate
+                  ? format(selectedDate, "dd/MM/yyyy")
+                  : "Select Date"}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0 glass-card" align="start">

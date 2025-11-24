@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
     --background: 210 100% 97%;
@@ -37,13 +33,13 @@ All colors MUST be HSL.
     --ring: 280 70% 60%;
 
     --radius: 1.5rem;
-    
+
     /* Gradient colors */
     --gradient-pink: 330 80% 75%;
     --gradient-purple: 280 70% 65%;
     --gradient-blue: 195 100% 70%;
     --gradient-cyan: 185 100% 75%;
-    
+
     /* Glass effect */
     --glass-bg: 0 0% 100%;
     --glass-border: 0 0% 100%;
@@ -94,7 +90,7 @@ All colors MUST be HSL.
     --border: 280 30% 25%;
     --input: 280 40% 20%;
     --ring: 280 70% 60%;
-    
+
     --glass-bg: 280 40% 15%;
     --glass-border: 280 30% 30%;
     --glass-shadow: 280 70% 20%;
@@ -108,7 +104,7 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
   }
 }
 
@@ -116,12 +112,21 @@ All colors MUST be HSL.
   .glass-card {
     @apply bg-glass-bg/40 backdrop-blur-xl border border-glass-border/20 shadow-lg shadow-glass-shadow/10;
   }
-  
+
   .gradient-pink-blue {
-    background: linear-gradient(135deg, hsl(var(--gradient-pink)) 0%, hsl(var(--gradient-purple)) 50%, hsl(var(--gradient-blue)) 100%);
+    background: linear-gradient(
+      135deg,
+      hsl(var(--gradient-pink)) 0%,
+      hsl(var(--gradient-purple)) 50%,
+      hsl(var(--gradient-blue)) 100%
+    );
   }
-  
+
   .gradient-icon {
-    background: linear-gradient(135deg, hsl(var(--gradient-pink)) 0%, hsl(var(--gradient-blue)) 100%);
+    background: linear-gradient(
+      135deg,
+      hsl(var(--gradient-pink)) 0%,
+      hsl(var(--gradient-blue)) 100%
+    );
   }
 }
