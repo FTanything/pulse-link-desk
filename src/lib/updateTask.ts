@@ -8,7 +8,7 @@ export default async function updateTask(id:string, title:string, date:string, s
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "text/plain"
         },
         body:JSON.stringify({
           id:id,

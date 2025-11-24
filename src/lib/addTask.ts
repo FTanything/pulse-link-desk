@@ -9,7 +9,7 @@ export default async function addTask(
   return await fetch(`${API_BASE_URL}/${API_KEY}/exec?action=post`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "text/plain",
     },
     body: JSON.stringify({
       title: title,

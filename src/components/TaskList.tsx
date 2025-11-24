@@ -7,11 +7,10 @@ import deleteTask from "@/lib/deleteTask";
 import { Task } from "interface";
 
 interface TaskListProps {
-  onDeleteTask: (id: string) => void;
   activeTaskId?: string | null;
 }
 
-export const TaskList = ({ onDeleteTask, activeTaskId }: TaskListProps) => {
+export const TaskList = ({ activeTaskId }: TaskListProps) => {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
@@ -73,7 +72,7 @@ export const TaskList = ({ onDeleteTask, activeTaskId }: TaskListProps) => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => onDeleteTask(task.id)}
+                    onClick={() => handleDelete(task.id)}
                     className="h-8 w-8 text-muted-foreground hover:text-destructive"
                   >
                     <Trash2 className="w-4 h-4" />
