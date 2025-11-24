@@ -43,9 +43,6 @@ export const TaskList = ({ onDeleteTask, activeTaskId }: TaskListProps) => {
           <p className="text-muted-foreground text-center py-8">
             No tasks yet. Create one below!
           </p>
-          <p className="text-muted-foreground text-center py-8">
-            No tasks yet. Create one below!
-          </p>
         ) : (
           tasks.map((task) => (
             <div
