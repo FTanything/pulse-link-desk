@@ -6,6 +6,6 @@ export interface Task{
 }
 
 export interface TaskJson{
-    status: string,
-    data: Task[]
+    status:string,
+    data:Task[]
 }
