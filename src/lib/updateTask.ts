@@ -1,7 +1,7 @@
 import { API_BASE_URL, API_KEY } from "@/config/apiConfig";
 import { TaskJson } from "interface";
 
-export default async function updateTask(update:string): Promise<TaskJson> {
+export default async function updateTask(id:string, title:string, date:string, status:string): Promise<TaskJson> {
     return await fetch(
       `${API_BASE_URL}/${API_KEY}/exec?action=put`,
       {
@@ -9,7 +9,12 @@ export default async function updateTask(update:string): Promise<TaskJson> {
         headers: {
           "Content-Type": "application/json"
         },
-        body:JSON.stringify(update)
+        body:JSON.stringify({
+          id:id,
+          title:title,
+          date:date,
+          status:status
+        })
       }
     )
       .then((response) => {
