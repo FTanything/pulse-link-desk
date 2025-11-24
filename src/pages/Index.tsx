@@ -171,7 +171,7 @@ const Index = () => {
           ) {
             new Notification("⏰ Task Alert", {
               body: task.name,
-              icon: "/favicon.ico",
+              icon: "/newicon.png",
               tag: task.id,
               requireInteraction: true,
             });
