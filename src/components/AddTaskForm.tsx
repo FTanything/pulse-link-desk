@@ -6,17 +6,14 @@ import { format } from "date-fns";
 import { Calendar } from "./ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { toast } from "sonner";
+import addTask from "../lib/addTask";
 
-interface AddTaskFormProps {
-  onAddTask: (task: { name: string; date: Date; time: string }) => void;
-}
-
-export const AddTaskForm = ({ onAddTask }: AddTaskFormProps) => {
+export const AddTaskForm = ({ onRefresh }: { onRefresh: () => void }) => {
   const [taskName, setTaskName] = useState("");
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!taskName.trim()) {
@@ -34,11 +31,10 @@ export const AddTaskForm = ({ onAddTask }: AddTaskFormProps) => {
       return;
     }
 
-    onAddTask({
-      name: taskName,
-      date: selectedDate,
-      time: selectedTime,
-    });
+    const combinedDateTime = `${format(selectedDate, "yyyy-MM-dd")} ${selectedTime}`;
+    await addTask(taskName,combinedDateTime)
+    
+    onRefresh();
 
     setTaskName("");
     setSelectedDate(undefined);

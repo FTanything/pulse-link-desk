@@ -199,6 +199,12 @@ const Index = () => {
     return () => clearInterval(interval);
   }, [tasks, activeTaskId]);
 
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const refreshTasks = () => {
+    setRefreshKey((prev) => prev + 1);
+  };
+
   return (
     <div
       className="min-h-screen w-full bg-cover bg-center bg-fixed p-4 md:p-8"
@@ -237,19 +243,18 @@ const Index = () => {
             </div>
 
             <div className="lg:hidden">
-              <AddTaskForm onAddTask={handleAddTask} />
+              <AddTaskForm onRefresh={refreshTasks}/>
             </div>
           </div>
 
           <div className="space-y-6">
             <TaskList
-              tasks={tasks}
-              onDeleteTask={handleDeleteTask}
               activeTaskId={activeTaskId}
+              refreshKey={refreshKey}
             />
 
             <div className="hidden lg:block">
-              <AddTaskForm onAddTask={handleAddTask} />
+              <AddTaskForm onRefresh={refreshTasks}/>
             </div>
           </div>
         </div>

@@ -8,9 +8,10 @@ import { Task } from "interface";
 
 interface TaskListProps {
   activeTaskId?: string | null;
+  refreshKey?: number;
 }
 
-export const TaskList = ({ activeTaskId }: TaskListProps) => {
+export const TaskList = ({ activeTaskId, refreshKey }: TaskListProps) => {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
@@ -23,7 +24,7 @@ export const TaskList = ({ activeTaskId }: TaskListProps) => {
       }
     };
     fetchTasks();
-  }, []);
+  }, [refreshKey]);
 
   const handleDelete = async(id:string) => {
     try{
